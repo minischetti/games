@@ -2,6 +2,12 @@
   "name": "art-game",
   "version": "1.0.0",
   "description": "",
+  "targets": {
+    "main": {
+      "context": "browser",
+      "source": "src/index.html"
+    }
+  },
   "scripts": {
     "clean": "rm -rf dist && mkdir dist",
     "build": "parcel build",
@@ -11,12 +17,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@mdx-js/react": "^1.6.22",
+    "@parcel/transformer-mdx": "^2.8.1",
     "parcel": "^2.8.1",
     "process": "^0.11.10"
   },
   "dependencies": {
+    "@xstate/react": "^3.0.1",
     "phosphor-react": "^1.4.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "xstate": "^4.35.0"
   }
 }
