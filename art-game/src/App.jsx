@@ -8,29 +8,31 @@ const gameMachine = createMachine({
     id: 'game',
     initial: 'lobby',
     context: {
-        players: [],
+        participants: [],
         art: [],
     },
     states: {
         lobby: {
-            on: { NEXT: 'players' },
+            on: { NEXT: 'participants' },
         },
-        players: {
+        participants: {
             on: {
                 BACK: 'lobby',
                 NEXT: {
                     target: 'art',
-                    cond: (context) => context.players.length > 1,
+                    cond: (context) => context.participants.length >= 1,
                 },
                 ADD: {
                     actions: assign({
-                        players: (context, event) => {
-                            const players = [...context.players];
-                            players.push({
-                                id: players.length,
-                                name: `Player ${players.length + 1}`,
+                        participants: (context, event) => {
+                            console.log(event);
+                            const participants = [...context.participants];
+                            participants.push({
+                                id: participants.length,
+                                name: event.name,
+                                role: event.role,
                             });
-                            return players;
+                            return participants;
                         }
                     })
                 },
@@ -38,7 +40,7 @@ const gameMachine = createMachine({
         },
         art: {
             on: {
-                BACK: 'players',
+                BACK: 'participants',
                 NEXT: {
                     target: 'game',
                     cond: (context) => context.art.length > 1,
@@ -72,17 +74,80 @@ export function Lobby({ state, stateUpdate }) {
     );
 }
 
-export function Players({ state, stateUpdate }) {
+export function Participants({ state, stateUpdate }) {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        let errors = [];
+        if (event.target.elements.name.value === "") {
+            errors.push("Name is required");
+        }
+        if (event.target.elements.role.value === "") {
+            errors.push("Role is required");
+        }
+        if (errors.length) {
+            return alert(
+                `Please correct the following errors:\n${errors.join("\n")}`
+            );
+        }
+        event.target.reportValidity();
+        const { name, role } = event.target.elements;
+        stateUpdate({
+            type: "ADD",
+            name: name.value,
+            role: role.value,
+        });
+    };
     return (
         <div>
             <button onClick={() => stateUpdate("BACK")}>Back</button>
-            <h2>Players</h2>
+            <h2>Participants</h2>
+            <h3>Guests</h3>
             <ul>
-                {state.context.players.length ? state.context.players.map((player) => (
-                    <li key={player.id}>{player.name}</li>
-                )) : null}
+                {state.context.participants.filter((participant) => participant.role === "guest").map((participant, index) => (
+                    <li key={index}>{participant.name}</li>
+                ))}
             </ul>
-            <button onClick={() => stateUpdate("ADD")}>Add Player</button>
+            <h3>Artists</h3>
+            <ul>
+                {state.context.participants.filter((participant) => participant.role === "artist").map((participant, index) => (
+                    <li key={index}>{participant.name}</li>
+                ))}
+            </ul>
+            <h3>Connoisseurs</h3>
+            <ul>
+                {state.context.participants.filter((participant) => participant.role === "connoisseur").map((participant, index) => (
+                    <li key={index}>{participant.name}</li>
+                ))}
+            </ul>
+            <h3>Collectors</h3>
+            <ul>
+                {state.context.participants.filter((participant) => participant.role === "collector").map((participant, index) => (
+                    <li key={index}>{participant.name}</li>
+                ))}
+            </ul>
+            <form onSubmit={handleSubmit} onError={(error) => console.log(error)}>
+                <input type="text" name="name" placeholder='Name' />
+                <select name="role">
+                    <option value="">Role</option>
+                    <option value="guest">Guest</option>
+                    <option value="artist">Artist</option>
+                    <option value="connoisseur">Connoisseur</option>
+                    <option value="collector">Collector</option>
+                </select>
+                {/* input type text placeholder role */}
+                <button type="submit">Add Participant</button>
+            </form>
+            <button onClick={() => stateUpdate("NEXT")}>Next</button>
+        </div>
+    );
+}
+
+export function Art({ state, stateUpdate }) {
+    return (
+        <div>
+            <button onClick={() => stateUpdate("BACK")}>Back</button>
+            <h2>Art</h2>
+            <button onClick={() => stateUpdate("NEXT")}>Next</button>
         </div>
     );
 }
@@ -90,13 +155,13 @@ export function Players({ state, stateUpdate }) {
 export function App() {
     const [state, stateUpdate] = useMachine(gameMachine);
     const lobby = state.matches("lobby");
-    const players = state.matches("players");
+    const participants = state.matches("participants");
     const art = state.matches("art");
     return (
         <>
             {lobby ? <Lobby state={state} stateUpdate={stateUpdate} /> : null}
-            {players ? <Players state={state} stateUpdate={stateUpdate} /> : null}
-            {/* {art ? <Art state={state} stateUpdate={stateUpdate} /> : null} */}
+            {participants ? <Participants state={state} stateUpdate={stateUpdate} /> : null}
+            {art ? <Art state={state} stateUpdate={stateUpdate} /> : null}
         </>
     );
 }
