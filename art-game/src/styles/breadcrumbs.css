@@ -1,0 +1,19 @@
+.breadcrumbs {
+    display: flex;
+    flex: 1;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    outline: 1px solid #ccc;
+    align-items: center;
+    transition: all 0.5s;
+    justify-content: center;
+}
+
+.breadcrumb {
+    color: #bbb;
+}
+
+.breadcrumb.active {
+    color: #000;
+    font-size: 2rem;
+}

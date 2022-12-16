@@ -1,0 +1,18 @@
+.participants-role-container {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+    outline: 1px solid #ccc;
+}
+.participants-role {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    outline: 1px solid #ccc;
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+
+.participants-role.required {
+    outline-color: hsla(0, 100%, 50%, 1);
+}
