@@ -5,23 +5,13 @@ import Prose from './prose/Prose';
 import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, Warning } from 'phosphor-react';
 
 const roles = {
-    guest: {
-        name: "Guest",
-        description: "View the gallery and spectate the auction.",
+    collector: {
+        name: "Collector",
+        description: "Submit art for sale, view the gallery and participate in the auction.",
         permissions: {
             view: true,
-            bid: false,
-            auction: false,
-            art: false,
-        },
-    },
-    artist: {
-        name: "Artist",
-        description: "Submit art for sale and spectate the auction.",
-        permissions: {
-            view: true,
-            bid: false,
-            auction: false,
+            bid: true,
+            auction: true,
             art: true,
         },
     },
@@ -36,17 +26,26 @@ const roles = {
             judge: true,
         },
     },
-    collector: {
-        name: "Collector",
-        description: "Submit art for sale, view the gallery and participate in the auction.",
+    artist: {
+        name: "Artist",
+        description: "Submit art for sale and spectate the auction.",
         permissions: {
             view: true,
-            bid: true,
-            auction: true,
+            bid: false,
+            auction: false,
             art: true,
         },
     },
-
+    guest: {
+        name: "Guest",
+        description: "View the gallery and spectate the auction.",
+        permissions: {
+            view: true,
+            bid: false,
+            auction: false,
+            art: false,
+        },
+    },
 }
 
 
@@ -55,6 +54,7 @@ const gameMachine = createMachine({
     id: 'game',
     initial: 'lobby',
     context: {
+        people: [],
         participants: [],
         art: [],
     },
@@ -70,7 +70,6 @@ const gameMachine = createMachine({
                     cond: (context) => {
                         return context.participants.filter((participant) => participant.role === "collector").length > 0
                     }
-
                 },
                 ADD: {
                     actions: assign({
@@ -197,20 +196,40 @@ export function CharacterCreator({ state, stateUpdate }) {
             name: name.value,
             role: role.value,
         });
+        stateUpdate({ type: "NEXT" });
     };
     return (
         <>
             <form onSubmit={handleSubmit} onError={(error) => console.log(error)}>
                 <input type="text" name="name" placeholder='Name' />
-                <select name="role">
-                    <option value="">Role</option>
-                    <option value="guest">Guest</option>
-                    <option value="artist">Artist</option>
-                    <option value="connoisseur">Connoisseur</option>
-                    <option value="collector">Collector</option>
-                </select>
-                {/* input type text placeholder role */}
-                <button type="submit">Add Participant</button>
+                <div className='role-container'>
+                    <h3>Role</h3>
+                    <div className="role-list">
+                        <div className="table-row header">
+                            <div></div>
+                            <div>Role</div>
+                            <div>Description</div>
+                        </div>
+                        {Object.entries(roles).map(([key, role], index) => (
+                            <div key={key} className="table-row role">
+                                <input type="radio" name="role" value={key} />
+                                <label htmlFor={role}>{role.name}</label>
+                                <div className="description">{role.description}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className='persona-container'>
+                    <h3>Persona</h3>
+                    <h4>What are your 4 best traits?</h4>
+                    <div className="chip-list">
+                        <div className="chip">Charismatic</div>
+                        <div className="chip">Crafty</div>
+                        <div className="chip">Intelligent</div>
+                        <div className="chip">Funny</div>
+                    </div>
+                </div>
+                <button type="submit">Confirm</button>
             </form>
         </>
     );
