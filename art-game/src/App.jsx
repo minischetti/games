@@ -1,170 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMachine } from '@xstate/react';
-import { createMachine, assign } from 'xstate';
+import stateMachine from './state/machine';
 import Prose from './prose/Prose';
 import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, Warning } from 'phosphor-react';
+import roles from './data/roles';
 
-const roles = {
-    collector: {
-        name: "Collector",
-        description: "Submit art for sale, view the gallery and participate in the auction.",
-        permissions: {
-            view: true,
-            bid: true,
-            auction: true,
-            art: true,
-        },
-    },
-    connoisseur: {
-        name: "Connoisseur",
-        description: "Form a panel with other art connoisseurs where you may judge the gallery art for authenticity and spectate the auction.",
-        permissions: {
-            view: true,
-            bid: false,
-            auction: false,
-            art: true,
-            judge: true,
-        },
-    },
-    artist: {
-        name: "Artist",
-        description: "Submit art for sale and spectate the auction.",
-        permissions: {
-            view: true,
-            bid: false,
-            auction: false,
-            art: true,
-        },
-    },
-    guest: {
-        name: "Guest",
-        description: "View the gallery and spectate the auction.",
-        permissions: {
-            view: true,
-            bid: false,
-            auction: false,
-            art: false,
-        },
-    },
-}
-
-
-const gameMachine = createMachine({
-    predictableActionArguments: true,
-    id: 'game',
-    initial: 'lobby',
-    context: {
-        people: [],
-        participants: [],
-        art: [],
-    },
-    states: {
-        lobby: {
-            on: { NEXT: 'creator' },
-        },
-        creator: {
-            on: {
-                BACK: 'lobby',
-                NEXT: {
-                    target: 'participants',
-                    cond: (context) => {
-                        return context.participants.filter((participant) => participant.role === "collector").length > 0
-                    }
-                },
-                ADD: {
-                    actions: assign({
-                        participants: (context, event) => {
-                            console.log(event);
-                            const participants = [...context.participants];
-                            participants.push({
-                                id: participants.length,
-                                name: event.name,
-                                role: event.role,
-                            });
-                            return participants;
-                        }
-                    })
-                },
-            },
-        },
-
-        participants: {
-            entry: [
-                (context) => {
-                    const players_min = 4;
-                    const participants = [...context.participants];
-                    const players = context.participants.filter((participant) => participant.role === "collector").length;
-                    const players_missing = players_min - players;
-                    if (players_missing) {
-                        for (let i = 0; i < players_missing; i++) {
-                            participants.push({
-                                id: participants.length,
-                                name: `Clever AI ${participants.length + 1}`,
-                                role: 'collector',
-                                type: 'ai',
-                            });
-                        }
-                    }
-                    return context.participants = participants;
-                }
-            ],
-            on: {
-                BACK: 'lobby',
-                NEXT: {
-                    target: 'art',
-                    cond: (context) => {
-                        return context.participants.filter((participant) => participant.role === "collector").length > 0
-                    },
-                    actions: [
-                        assign({
-                            participants: (context) => {
-                                const players_min = 4;
-                                const participants = [...context.participants];
-                                const players = context.participants.filter((participant) => participant.role === "collector").length;
-                                const players_missing = players_min - players;
-                                if (players_missing) {
-                                    for (let i = 0; i < players_missing; i++) {
-                                        participants.push({
-                                            id: participants.length,
-                                            name: `Clever AI ${participants.length + 1}`,
-                                            role: 'collector',
-                                        });
-                                    }
-                                }
-                                return participants;
-                            }
-                        })
-                    ],
-                },
-            },
-        },
-        art: {
-            on: {
-                BACK: 'participants',
-                // on invocation
-                NEXT: {
-                    target: 'game',
-                    cond: (context) => context.art.length > 1,
-                },
-            },
-        },
-        game: {
-            on: {
-                BACK: 'art',
-                MOVE: {
-                    target: 'game',
-                    actions: [
-                        'game.move',
-                    ],
-                },
-                NEXT: 'summary',
-            },
-        },
-        summary: {
-            on: { RESTART: 'lobby' },
-        },
-    }
-});
 
 export function Lobby({ state, stateUpdate }) {
     return (
@@ -320,7 +160,7 @@ export function Breadcrumbs({ state }) {
 }
 
 export function App() {
-    const [state, stateUpdate] = useMachine(gameMachine);
+    const [state, stateUpdate] = useMachine(stateMachine);
     const lobby = state.matches("lobby");
     const creator = state.matches("creator");
     const participants = state.matches("participants");
