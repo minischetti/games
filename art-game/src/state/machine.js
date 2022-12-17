@@ -1,21 +1,45 @@
 import { createMachine, assign } from 'xstate';
+// const createArtRanges = () => {
+//     const range_max = 1000000;
+//     const range_min = 0;
+//     const brackets_limit = Math.floor(Math.random() * 8);
+//     const brackets = Array.from(brackets_limit).map(bracket => {
+        
+//     }
+
+const artValuator = () => {
+    const value_ceiling = 100000;
+    const value_floor = 0;
+    const bracket_limits = Math.floor(Math.random() * 5);
+    return [...bracket_limits].map(bracket_limit => {
+        return {
+            limit: bracket_limit,
+            range: [
+                Math.floor(Math.random() * value_ceiling) / bracket_limit,
+                Math.floor(Math.random() * value_floor) / bracket_limit,
+            ],
+        }
+    })
+}
 
 export default createMachine({
     predictableActionArguments: true,
     id: 'game',
-    initial: 'lobby',
+    initial: 'welcome',
     context: {
         people: [],
         participants: [],
         art: [],
     },
     states: {
-        lobby: {
-            on: { NEXT: 'creator' },
-        },
-        creator: {
+        welcome: {
             on: {
-                BACK: 'lobby',
+                NEXT: 'lobby',
+        },
+        },
+        lobby: {
+            on: {
+                BACK: 'welcome',
                 NEXT: {
                     target: 'participants',
                     cond: (context) => {
@@ -38,7 +62,6 @@ export default createMachine({
                 },
             },
         },
-
         participants: {
             entry: [
                 (context) => {
@@ -81,8 +104,6 @@ export default createMachine({
                                 id: art.length,
                                 name: `Art ${art.length + 1}`,
                                 artist: `Artist ${art.length + 1}`,
-                                year: Math.floor(Math.random() * 100) + 1,
-                                price: Math.floor(Math.random() * 1000) + 1,
                                 color: {
                                     r: Math.floor(Math.random() * 255) + 1,
                                     g: Math.floor(Math.random() * 255) + 1,

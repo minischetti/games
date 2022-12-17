@@ -1,0 +1,19 @@
+button {
+    all: unset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    background-color: var(--color-accent);
+    color: white;
+    gap: 0.5rem;
+}
+
+button:hover, button:focus {
+    outline: 2px solid blue;
+}
+
+button:disabled {
+    filter: blur(0.1rem);
+    
+}

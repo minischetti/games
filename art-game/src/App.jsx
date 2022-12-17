@@ -4,12 +4,17 @@ import stateMachine from './state/machine';
 import Prose from './prose/Prose';
 import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, Warning } from 'phosphor-react';
 import roles from './data/roles';
+import rules from './rules/rules';
 
 
-export function Lobby({ state, stateUpdate }) {
+export function Home({ state, stateUpdate }) {
     return (
-        <div>
+        <div className="letter">
             <Prose.Welcome />
+            <button onClick={() => stateUpdate("NEXT")}>
+                <div>Start</div>
+                <ArrowRight size={32} />
+            </button>
         </div>
     );
 }
@@ -36,7 +41,7 @@ export function CharacterCreator({ state, stateUpdate }) {
             name: name.value,
             role: role.value,
         });
-        stateUpdate({ type: "NEXT" });
+        // stateUpdate({ type: "NEXT" });
     };
     return (
         <>
@@ -74,69 +79,35 @@ export function CharacterCreator({ state, stateUpdate }) {
                         <div className="chip">Funny</div>
                     </div> */}
                 </div>
-                <button type="submit">Confirm</button>
+                <button type="submit">
+                        <div>Join Game</div>
+                        <ArrowRight size={32} />
+                </button>
             </form>
         </>
     );
 }
-export function Participants({ state, stateUpdate }) {
-    const collectors = state.context.participants.filter((participant) => participant.role === "collector").length;
+export function Lobby({ state, stateUpdate }) {
     return (
         <div>
-            {/* <div className="participants">
-                {state.context.participants.map((participant, index) => (
-                    <div key={index}>
-                        <div>{participant.name}</div>
-                        <div>{participant.role}</div>
-                    </div>
-                ))}
-            </div> */}
             <h2>Participants ({state.context.participants.length})</h2>
             <div className="participants-role-container">
-                <div className="participants-role required">
-                    <h3>Collectors</h3>
-                    <div>{roles.collector.description}</div>
-                    {collectors < 4 && (
-                        <div className='alert alert--inline'>
-                            {/* <Warning size={32} />    */}
-                            <HandWaving size={64} />
-                            <div>A minimum of four collectors is required to play. If the number of player collectors is less than four, the remainder will be played by AI.</div>
+                {(roles).map((role) => {
+                    return (
+                        <div className="participants-role" key={role.id}>
+                            <h3>{role.name}</h3>
+                            <p>{role.description}</p>
+                            {state.context.participants.filter((participant) => participant.role === "collector").map((participant, index) => (
+                            <li key={index}>{participant.name}</li>
+                            ))}
                         </div>
-                    )}
-                    <ol>
-                        {state.context.participants.filter((participant) => participant.role === "collector").map((participant, index) => (
-                            <li key={index}>{participant.name}</li>
-                        ))}
-                    </ol>
-                </div>
-                <div className="participants-role">
-                    <h3>Guests</h3>
-                    <div>{roles.guest.description}</div>
-                    <ul>
-                        {state.context.participants.filter((participant) => participant.role === "guest").map((participant, index) => (
-                            <li key={index}>{participant.name}</li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="participants-role">
-                    <h3>Artists</h3>
-                    <div>{roles.artist.description}</div>
-                    <ul>
-                        {state.context.participants.filter((participant) => participant.role === "artist").map((participant, index) => (
-                            <li key={index}>{participant.name}</li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="participants-role">
-                    <h3>Connoisseurs</h3>
-                    <div>{roles.connoisseur.description}</div>
-                    <ul>
-                        {state.context.participants.filter((participant) => participant.role === "connoisseur").map((participant, index) => (
-                            <li key={index}>{participant.name}</li>
-                        ))}
-                    </ul>
-                </div>
+                    )})}
             </div>
+            <button onClick={() => stateUpdate("BACK")}>
+                        <ArrowLeft size={32} />
+                        <div>Go Back</div>
+                </button>
+            <CharacterCreator state={state} stateUpdate={stateUpdate} />
         </div>
     );
 }
@@ -183,28 +154,20 @@ export function Breadcrumbs({ state }) {
 
 export function App() {
     const [state, stateUpdate] = useMachine(stateMachine);
+    const welcome = state.matches("welcome");
     const lobby = state.matches("lobby");
-    const creator = state.matches("creator");
-    const participants = state.matches("participants");
-    const art = state.matches("art");
+    const pre_game = state.matches("pre_game");
+    const game = state.matches("game");
+    const post_game = state.matches("post_game");
     return (
-        <>
-            <h1>🎨 The Fine Art Gallery and Auction House</h1>
-            <div className='header'>
-                <div className='stages'>
-                    <button onClick={() => stateUpdate("BACK")}>
-                        <ArrowLeft size={32} />
-                    </button>
-                    <Breadcrumbs state={state} />
-                    <button onClick={() => stateUpdate("NEXT")}>
-                        <ArrowRight size={32} />
-                    </button>
-                </div>
+        <div className='app'>
+            <div className="logo">
+                <div className="logo-icon">🎨</div>
+                <h1 className="logo-title">The Fine Art Gallery and Auction House</h1>
             </div>
-            {lobby ? <Lobby state={state} stateUpdate={stateUpdate} /> : null}
-            {creator && <CharacterCreator state={state} stateUpdate={stateUpdate} />}
-            {participants ? <Participants state={state} stateUpdate={stateUpdate} /> : null}
-            {art ? <Art state={state} stateUpdate={stateUpdate} /> : null}
-        </>
+            <Breadcrumbs state={state} />
+            {welcome && <Home state={state} stateUpdate={stateUpdate} />}
+            {lobby && <Lobby state={state} stateUpdate={stateUpdate} />}
+        </div>
     );
 }

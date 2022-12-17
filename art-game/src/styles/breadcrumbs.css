@@ -2,11 +2,14 @@
     display: flex;
     flex: 1;
     gap: 0.5rem;
-    padding: 0.5rem;
-    outline: 1px solid #ccc;
+    padding: 2rem 4rem;
+    /* outline: 1px solid #ccc; */
     align-items: center;
     transition: all 0.5s;
     justify-content: center;
+    /* backdrop-filter: blur(1rem); */
+    border-radius: 0.25rem;
+    background-color: #eee;
 }
 
 .breadcrumb {

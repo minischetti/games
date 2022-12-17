@@ -1,5 +1,6 @@
-export default {
-    collector: {
+export default [
+    {
+        id: "collector",
         name: "Collector",
         description: "Submit art for sale, view the gallery and participate in the auction.",
         permissions: {
@@ -9,7 +10,8 @@ export default {
             art: true,
         },
     },
-    connoisseur: {
+    {
+        id: "connoisseur",
         name: "Connoisseur",
         description: "Form a panel with other art connoisseurs where you may judge the gallery art for authenticity and spectate the auction.",
         permissions: {
@@ -20,7 +22,8 @@ export default {
             judge: true,
         },
     },
-    artist: {
+    {
+        id: "artist",
         name: "Artist",
         description: "Submit art for sale and spectate the auction.",
         permissions: {
@@ -30,7 +33,8 @@ export default {
             art: true,
         },
     },
-    guest: {
+    {
+        id: "guest",
         name: "Guest",
         description: "View the gallery and spectate the auction.",
         permissions: {
@@ -40,4 +44,4 @@ export default {
             art: false,
         },
     },
-}
+]
