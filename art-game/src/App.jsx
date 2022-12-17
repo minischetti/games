@@ -201,7 +201,10 @@ export function CharacterCreator({ state, stateUpdate }) {
     return (
         <>
             <form onSubmit={handleSubmit} onError={(error) => console.log(error)}>
-                <input type="text" name="name" placeholder='Name' />
+                <div className='form-container'>
+                    <h3>Name</h3>
+                    <input type="text" name="name" placeholder='Name' />
+                </div>
                 <div className='role-container'>
                     <h3>Role</h3>
                     <div className="role-list">
@@ -221,13 +224,15 @@ export function CharacterCreator({ state, stateUpdate }) {
                 </div>
                 <div className='persona-container'>
                     <h3>Persona</h3>
-                    <h4>What are your 4 best traits?</h4>
+                    <h4>Coming soon!</h4>
+                    {/* <h4>What are your 4 best traits?</h4>
+                    <input type="text" name="persona" placeholder='Trait' />
                     <div className="chip-list">
                         <div className="chip">Charismatic</div>
                         <div className="chip">Crafty</div>
                         <div className="chip">Intelligent</div>
                         <div className="chip">Funny</div>
-                    </div>
+                    </div> */}
                 </div>
                 <button type="submit">Confirm</button>
             </form>
