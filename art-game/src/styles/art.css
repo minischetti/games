@@ -1,0 +1,50 @@
+.artwork-list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(min-content , 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+.artwork {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+}
+
+.artwork-image, .artwork-color {
+    --shadow-color: rgba(0,0,0,.25);
+    position: relative;
+    width: 8rem;
+    height: 10rem;
+    object-fit: contain;
+    box-shadow: 0 0 1rem #aaa,
+                0 0 0 8px #000 inset,
+                0 0 0 10px var(--shadow-color) inset,
+                0 0 0 14px #fff inset,
+                0 0 0 16px var(--shadow-color) inset;
+}
+
+.artwork-color::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(0deg, transparent, #fff);
+    opacity: .25;
+    backdrop-filter: blur(.25rem);
+}
+
+.artwork-name {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 200%;
+}
+
+.artwork-artist {
+    font-style: italic;
+    font-size: 125%;
+}

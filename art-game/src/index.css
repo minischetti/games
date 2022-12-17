@@ -1,9 +1,15 @@
 @import url(./styles/breadcrumbs.css);
 @import url(./styles/participants.css);
 @import url(./styles/alerts.css);
+@import url(./styles/art.css);
 
 html, body {
+    margin: 0;
+    padding: 0;
+}
 
+body {
+    font-family: sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
