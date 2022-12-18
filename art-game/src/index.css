@@ -128,3 +128,29 @@ input[type=radio] {
 input[type=radio]:checked {
     background-color: #000;
 }
+
+.app {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.toolbar {
+    /* position: fixed; */
+    /* bottom: 0; */
+    display: flex;
+}
+
+.center {
+    flex: 1;
+    width: calc(100vw / 2);
+}
+
+.side {
+    position: fixed;
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
+    right: 0;
+    width: calc(100vw / 4);
+}
+

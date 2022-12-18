@@ -3,6 +3,7 @@ export default [
         id: "collector",
         name: "Collector",
         description: "Submit art for sale, view the gallery and participate in the auction.",
+        required: true,
         permissions: {
             view: true,
             bid: true,

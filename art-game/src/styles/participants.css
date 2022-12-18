@@ -1,3 +1,9 @@
+.participants {
+    display: flex;
+    flex-direction: column;
+    /* height: 100%; */
+}
+
 .participants-role-container {
     display: flex;
     gap: 1rem;

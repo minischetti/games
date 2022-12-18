@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useMachine } from '@xstate/react';
 import stateMachine from './state/machine';
 import Prose from './prose/Prose';
-import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, Warning } from 'phosphor-react';
+import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, UserPlus, Warning } from 'phosphor-react';
 import roles from './data/roles';
 import rules from './rules/rules';
 
@@ -12,7 +12,7 @@ export function Home({ state, stateUpdate }) {
         <div className="letter">
             <Prose.Welcome />
             <button onClick={() => stateUpdate("NEXT")}>
-                <div>Start</div>
+                <div>Next</div>
                 <ArrowRight size={32} />
             </button>
         </div>
@@ -44,7 +44,8 @@ export function CharacterCreator({ state, stateUpdate }) {
         // stateUpdate({ type: "NEXT" });
     };
     return (
-        <>
+        <div className='character-creator'>
+            <h2>Character Creator</h2>
             <form onSubmit={handleSubmit} onError={(error) => console.log(error)}>
                 <div className='form-container'>
                     <h3>Name</h3>
@@ -58,9 +59,9 @@ export function CharacterCreator({ state, stateUpdate }) {
                             <div>Role</div>
                             <div>Description</div>
                         </div>
-                        {Object.entries(roles).map(([key, role], index) => (
-                            <div key={key} className="table-row role">
-                                <input type="radio" name="role" value={key} />
+                        {roles.map(role => (
+                            <div key={role.id} className="table-row role">
+                                <input type="radio" name="role" value={role.id} />
                                 <label htmlFor={role}>{role.name}</label>
                                 <div className="description">{role.description}</div>
                             </div>
@@ -80,36 +81,41 @@ export function CharacterCreator({ state, stateUpdate }) {
                     </div> */}
                 </div>
                 <button type="submit">
-                        <div>Join Game</div>
-                        <ArrowRight size={32} />
+                    <div>Join Game</div>
+                    <UserPlus size={32} />
                 </button>
             </form>
-        </>
+        </div>
     );
 }
 export function Lobby({ state, stateUpdate }) {
     return (
-        <div>
+        <div>   
+            <Participants state={state} stateUpdate={stateUpdate} />
+            <CharacterCreator state={state} stateUpdate={stateUpdate} />
+        </div>
+    );
+}
+
+export function Participants({ state, stateUpdate }) {
+    return (
+        <div className="participants">
             <h2>Participants ({state.context.participants.length})</h2>
             <div className="participants-role-container">
-                {(roles).map((role) => {
+                {roles.map((role) => {
                     return (
                         <div className="participants-role" key={role.id}>
                             <h3>{role.name}</h3>
                             <p>{role.description}</p>
-                            {state.context.participants.filter((participant) => participant.role === "collector").map((participant, index) => (
-                            <li key={index}>{participant.name}</li>
+                            {state.context.participants.filter((participant) => participant.role === role.id).map((participant, index) => (
+                                <li key={index}>{participant.name}</li>
                             ))}
                         </div>
-                    )})}
+                    );
+                })}
             </div>
-            <button onClick={() => stateUpdate("BACK")}>
-                        <ArrowLeft size={32} />
-                        <div>Go Back</div>
-                </button>
-            <CharacterCreator state={state} stateUpdate={stateUpdate} />
         </div>
-    );
+    )
 }
 
 export function Art({ state, stateUpdate }) {
@@ -127,8 +133,8 @@ export function Art({ state, stateUpdate }) {
                     <div key={index} className="artwork">
                         <div>
                             {isImage(artwork) && <img className="artwork-image" src={getImage(artwork)} alt={artwork.name} />}
-                            {isColor(artwork) && 
-                                <div className="artwork-color" style={{ backgroundColor: getColor(artwork) }}/>
+                            {isColor(artwork) &&
+                                <div className="artwork-color" style={{ backgroundColor: getColor(artwork) }} />
                             }
                         </div>
                         <div className="artwork-name">{artwork.name}</div>
@@ -152,6 +158,14 @@ export function Breadcrumbs({ state }) {
     )
 }
 
+export function SideBar() {
+    return (
+        <div>
+
+        </div>
+    )
+}
+
 export function App() {
     const [state, stateUpdate] = useMachine(stateMachine);
     const welcome = state.matches("welcome");
@@ -161,13 +175,21 @@ export function App() {
     const post_game = state.matches("post_game");
     return (
         <div className='app'>
-            <div className="logo">
-                <div className="logo-icon">🎨</div>
-                <h1 className="logo-title">The Fine Art Gallery and Auction House</h1>
+            <div className="side">
+
             </div>
-            <Breadcrumbs state={state} />
-            {welcome && <Home state={state} stateUpdate={stateUpdate} />}
-            {lobby && <Lobby state={state} stateUpdate={stateUpdate} />}
+            <div className='center'>
+
+                <Breadcrumbs state={state} />
+                <div className="logo">
+                    <div className="logo-icon">🎨</div>
+                    <h1 className="logo-title">The Fine Art Gallery and Auction House</h1>
+                </div>
+                {welcome && <Home state={state} stateUpdate={stateUpdate} />}
+                {lobby && <Lobby state={state} stateUpdate={stateUpdate} />}
+            </div>
+            <div className="side">
+            </div>
         </div>
     );
 }
