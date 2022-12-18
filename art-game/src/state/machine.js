@@ -1,10 +1,10 @@
-import { createMachine, assign } from 'xstate';
+import { createMachine, assign, actions } from 'xstate';
 // const createArtRanges = () => {
 //     const range_max = 1000000;
 //     const range_min = 0;
 //     const brackets_limit = Math.floor(Math.random() * 8);
 //     const brackets = Array.from(brackets_limit).map(bracket => {
-        
+
 //     }
 
 const artValuator = () => {
@@ -24,7 +24,7 @@ const artValuator = () => {
 
 export default createMachine({
     predictableActionArguments: true,
-    id: 'game',
+    id: 'gameMachine',
     initial: 'welcome',
     context: {
         people: [],
@@ -35,34 +35,9 @@ export default createMachine({
         welcome: {
             on: {
                 NEXT: 'lobby',
-        },
-        },
-        lobby: {
-            on: {
-                BACK: 'welcome',
-                NEXT: {
-                    target: 'participants',
-                    cond: (context) => {
-                        return context.participants.filter((participant) => participant.role === "collector").length > 0
-                    }
-                },
-                ADD: {
-                    actions: assign({
-                        participants: (context, event) => {
-                            console.log(event);
-                            const participants = [...context.participants];
-                            participants.push({
-                                id: participants.length,
-                                name: event.name,
-                                role: event.role,
-                            });
-                            return participants;
-                        }
-                    })
-                },
             },
         },
-        participants: {
+        lobby: {
             entry: [
                 (context) => {
                     const players_min = 4;
@@ -80,22 +55,9 @@ export default createMachine({
                         }
                     }
                     return context.participants = participants;
-                }
-            ],
-            on: {
-                BACK: 'lobby',
-                NEXT: {
-                    target: 'art',
-                    cond: (context) => {
-                        return context.participants.filter((participant) => participant.role === "collector").length > 0
-                    },
                 },
-            },
-        },
-        art: {
-            entry: [
                 (context) => {
-                    const art_min = 10;
+                    const art_min = 20;
                     const art = [...context.art];
                     const art_missing = art_min - art.length;
                     if (art_missing) {
@@ -116,17 +78,32 @@ export default createMachine({
                 }
             ],
             on: {
-                BACK: 'participants',
-                // on invocation
+                BACK: 'welcome',
                 NEXT: {
                     target: 'game',
-                    cond: (context) => context.art.length > 1,
+                    cond: (context) => {
+                        return context.participants.filter((participant) => participant.role === "collector").length > 0 && context.art.length >= 20
+                    }
+                },
+                ADD: {
+                    actions: assign({
+                        participants: (context, event) => {
+                            console.log(event);
+                            const participants = [...context.participants];
+                            participants.push({
+                                id: participants.length,
+                                name: event.name,
+                                role: event.role,
+                            });
+                            return participants;
+                        }
+                    })
                 },
             },
         },
         game: {
             on: {
-                BACK: 'art',
+                // BACK: 'lobby',
                 MOVE: {
                     target: 'game',
                     actions: [

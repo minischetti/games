@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useMachine } from '@xstate/react';
 import stateMachine from './state/machine';
 import Prose from './prose/Prose';
-import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, UserPlus, Warning } from 'phosphor-react';
+import { ArrowLeft, ArrowRight, ArrowUp, HandWaving, Question, UserPlus, Warning } from 'phosphor-react';
 import roles from './data/roles';
 import rules from './rules/rules';
 
@@ -12,7 +12,7 @@ export function Home({ state, stateUpdate }) {
         <div className="letter">
             <Prose.Welcome />
             <button onClick={() => stateUpdate("NEXT")}>
-                <div>Next</div>
+                <div>Enter Lobby</div>
                 <ArrowRight size={32} />
             </button>
         </div>
@@ -60,7 +60,7 @@ export function CharacterCreator({ state, stateUpdate }) {
                             <div>Description</div>
                         </div>
                         {roles.map(role => (
-                            <div key={role.id} className="table-row role">
+                            <div key={role.id} className='table-row role'>
                                 <input type="radio" name="role" value={role.id} />
                                 <label htmlFor={role}>{role.name}</label>
                                 <div className="description">{role.description}</div>
@@ -92,9 +92,39 @@ export function Lobby({ state, stateUpdate }) {
     return (
         <div>   
             <Participants state={state} stateUpdate={stateUpdate} />
+            <Art state={state} stateUpdate={stateUpdate} />
             <CharacterCreator state={state} stateUpdate={stateUpdate} />
+            <button onClick={() => stateUpdate("BACK")}>
+                    <div>Cancel</div>
+                    <ArrowLeft size={32}/>
+            </button>
+            <button onClick={() => stateUpdate("NEXT")}>
+                    <div>Next</div>
+                    <UserPlus size={32} />
+            </button>
         </div>
     );
+}
+
+export function Card({title, description, children}) {
+    const [open, setOpen] = useState(false);
+    const toggleOpen = () => setOpen(!open);
+    return (
+        <div className='card'>
+            <div className='card-header'>
+                <Question className='card-icon' size={24} onClick={toggleOpen}/>
+                <div className='card-title'>{title}</div>
+            </div>
+            {open && 
+                <div className='card-description'>
+                    {description}
+                </div>
+            }
+            <div className='card-content'>
+                {children}
+            </div>
+        </div>
+    )
 }
 
 export function Participants({ state, stateUpdate }) {
@@ -104,13 +134,14 @@ export function Participants({ state, stateUpdate }) {
             <div className="participants-role-container">
                 {roles.map((role) => {
                     return (
-                        <div className="participants-role" key={role.id}>
-                            <h3>{role.name}</h3>
-                            <p>{role.description}</p>
+                        <Card key={role.id} title={role.name + "s"} description={role.description}>
                             {state.context.participants.filter((participant) => participant.role === role.id).map((participant, index) => (
+                                <div>
                                 <li key={index}>{participant.name}</li>
+                                {/* {participant.type === "ai" && <div className="chip">AI</div>} */}
+                                </div>
                             ))}
-                        </div>
+                        </Card>
                     );
                 })}
             </div>
@@ -138,9 +169,9 @@ export function Art({ state, stateUpdate }) {
                             }
                         </div>
                         <div className="artwork-name">{artwork.name}</div>
-                        <div className="artwork-artist">{artwork.artist}</div>
-                        <div className="artwork-year">{artwork.year}</div>
-                        <div className="artwork-value">{artwork.value}</div>
+                        {/* <div className="artwork-artist">{artwork.artist}</div> */}
+                        {/* <div className="artwork-year">{artwork.year}</div> */}
+                        {/* <div className="artwork-value">{artwork.value}</div> */}
                     </div>
                 ))}
             </div>
@@ -158,7 +189,7 @@ export function Breadcrumbs({ state }) {
     )
 }
 
-export function SideBar() {
+export function Handbook() {
     return (
         <div>
 

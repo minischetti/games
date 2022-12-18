@@ -4,6 +4,7 @@
 @import url(./styles/alerts.css);
 @import url(./styles/art.css);
 @import url(./styles/buttons.css);
+@import url(./styles/card.css);
 
 html, body {
     margin: 0;
@@ -104,12 +105,12 @@ form {
         
 }
 
-@media screen and (min-width: 1440px) {
+/* @media screen and (min-width: 1440px) {
     body {
         width: 50vw;
         margin: 0 auto;
     }
-}
+} */
 
 input[type=text] {
     all: unset;
@@ -154,3 +155,6 @@ input[type=radio]:checked {
     width: calc(100vw / 4);
 }
 
+.available-soon {
+    filter: blur(1rem);
+}
