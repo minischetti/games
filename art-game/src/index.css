@@ -5,6 +5,7 @@
 @import url(./styles/art.css);
 @import url(./styles/buttons.css);
 @import url(./styles/card.css);
+@import url(./styles/actions.css);
 
 html, body {
     margin: 0;

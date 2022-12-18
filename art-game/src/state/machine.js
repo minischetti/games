@@ -102,6 +102,9 @@ export default createMachine({
             },
         },
         game: {
+            entry: (context) => {
+                return true;
+            },
             on: {
                 // BACK: 'lobby',
                 MOVE: {
